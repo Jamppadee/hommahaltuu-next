@@ -1,14 +1,24 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseServer } from '@/lib/supabaseServer';
 import { ProfileCard } from '@/components/ProfileCard';
 
+// tämä varmistaa että Next ei yritä prerenderöidä staattisesti buildissa
+export const dynamic = 'force-dynamic';
+// vaihtoehtoisesti voisi käyttää: export const revalidate = 0;
+
 export default async function Home() {
-  const { data } = await supabase
+  const supabase = getSupabaseServer();
+
+  const { data, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('approved', true)
     .limit(6);
+
+  if (error) {
+    console.error('Supabase error:', error);
+  }
 
   return (
     <section className="relative overflow-hidden">
