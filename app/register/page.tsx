@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from '@/lib/supabaseBrowser';
 
 export default function Register() {
   const [form, setForm] = useState<any>({});
+    const supabase = getSupabaseBrowser();
 
   useEffect(() => {
     (async () => {
