@@ -4,6 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Netlify's secrets scanner flags the Supabase anon key that Next.js inlines
+  # into the client bundle. The key is intentionally public, so skip scanning
+  # the generated client assets to avoid false positives during the build.
+  SECRETS_SCAN_OMIT_PATHS = ".next/**"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
