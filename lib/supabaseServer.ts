@@ -1,16 +1,17 @@
-// EI 'use client'
+// lib/supabaseServer.ts
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 
 export function getSupabaseServer() {
   const cookieStore = cookies()
+
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         get: (key) => cookieStore.get(key)?.value,
-        set: () => {}, // Netlify/SSR: jätä tyhjäksi jos et hallinnoi cookieseja tässä
+        set: () => {}, // ei pakollinen Netlifyssä jos et hallitse cookieseja
         remove: () => {},
       },
     }
