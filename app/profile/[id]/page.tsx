@@ -1,8 +1,12 @@
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseServer } from '@/lib/supabaseServer';
 import Image from 'next/image';
 import { fmtPrice } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Profile({ params }: { params: { id: string } }) {
+  const supabase = getSupabaseServer();
+
   const { data: p } = await supabase
     .from('profiles')
     .select('*')
