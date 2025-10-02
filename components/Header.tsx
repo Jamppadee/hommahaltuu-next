@@ -1,10 +1,11 @@
 "use client";
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from '@/lib/supabaseBrowser';
 import { useEffect, useState } from 'react';
 
 export function Header() {
   const [user, setUser] = useState<any>(null);
+  const supabase = getSupabaseBrowser();
 
   useEffect(() => {
     (async () => {
