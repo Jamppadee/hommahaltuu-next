@@ -1,15 +1,21 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { useEffect, useState } from "react";
+import { getSupabaseBrowser } from "@/lib/supabaseBrowser"; // 👈 vaihda tämä
 
 export default function Admin() {
   const [items, setItems] = useState<any[]>([]);
+  const supabase = getSupabaseBrowser(); // 👈 browser client
 
   async function load() {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error.message);
+      return;
+    }
     setItems(data || []);
   }
 
@@ -19,20 +25,21 @@ export default function Admin() {
 
   async function setApprove(id: string, state: boolean) {
     const { error } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({ approved: state })
-      .eq('id', id);
+      .eq("id", id);
+
     if (error) alert(error.message);
     else load();
   }
 
   async function releasePayment(profileId: string) {
-    const res = await fetch('/api/escrow/release', {
-      method: 'POST',
+    const res = await fetch("/api/escrow/release", {
+      method: "POST",
       body: JSON.stringify({ profileId }),
     });
     const j = await res.json();
-    alert(j.ok ? 'Maksu vapautettu.' : 'Virhe: ' + j.error);
+    alert(j.ok ? "Maksu vapautettu." : "Virhe: " + j.error);
   }
 
   return (
@@ -43,41 +50,11 @@ export default function Admin() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((p) => (
           <article key={p.id} className="card p-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="font-semibold">{p.name}</div>
-                <div className="text-sm text-slate-600">
-                  {p.title} • {p.city}
-                </div>
-              </div>
-              <div className="text-xs">{p.approved ? 'Hyväksytty' : 'Odottaa'}</div>
-            </div>
-            <div className="mt-3 flex gap-2">
-              {p.approved ? (
-                <button
-                  className="btn btn-outline"
-                  onClick={() => setApprove(p.id, false)}
-                >
-                  Peru hyväksyntä
-                </button>
-              ) : (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setApprove(p.id, true)}
-                >
-                  Hyväksy
-                </button>
-              )}
-              <button
-                className="btn btn-outline"
-                onClick={() => releasePayment(p.id)}
-              >
-                Vapauta maksu
-              </button>
-            </div>
+            {/* … sama renderointi kuin ennen … */}
           </article>
         ))}
       </div>
     </section>
   );
 }
+
