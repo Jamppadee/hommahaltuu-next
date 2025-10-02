@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabaseBrowser } from '@/lib/supabaseBrowser';
 import { ProfileCard } from '@/components/ProfileCard';
 import { Filters, type FiltersState } from '@/components/Filters';
 
 export default function Search() {
   const [items, setItems] = useState<any[]>([]);
+    const supabase = getSupabaseBrowser();
   const [loading, setLoading] = useState(true);
 
   async function load(f?: FiltersState) {
